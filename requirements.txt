@@ -1,0 +1,12 @@
+pandas
+numpy
+torch
+transformers
+sentence-transformers
+Pillow
+tqdm
+scikit-learn
+plotly
+faiss-cpu
+seaborn
+matplotlib
