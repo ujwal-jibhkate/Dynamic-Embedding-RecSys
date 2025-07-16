@@ -37,8 +37,8 @@ Follow these steps to set up the environment and run the project.
 First, clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/ujwal-jibhkate/Dynamic-Embedding-RecSys.git
+cd Dynamic-Embedding-RecSys
 ```
 
 It is highly recommended to create a Python virtual environment:
