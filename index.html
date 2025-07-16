@@ -57,6 +57,41 @@
             margin: 0 0 0.2em 0;
         }
 
+        .author-info {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5em 0.75em;
+            margin-top: 1em;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .author-info .separator {
+            color: var(--divider-color);
+        }
+
+        .author-info a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4em;
+            color: var(--text-secondary);
+            border-bottom: none;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .author-info a:hover {
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        
+        .author-info svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
         h2 {
             font-size: 1.7em;
             font-weight: 600;
@@ -105,14 +140,14 @@
             color: var(--code-text);
         }
 
-        a {
+        article a {
             color: var(--accent-color);
             text-decoration: none;
             font-weight: 500;
             border-bottom: 1px solid rgba(0, 122, 255, 0.2);
         }
 
-        a:hover {
+        article a:hover {
             border-bottom-color: var(--accent-color);
         }
         
@@ -174,6 +209,16 @@
     <div class="container">
         <header>
             <h1>From Clicks to Connections: Building a Smarter Recommender with Embeddings</h1>
+            <div class="author-info">
+                <span>By Ujwal Jibhkate</span>
+                <span class="separator">·</span>
+                <span>July 16, 2025</span>
+                <span class="separator">·</span>
+                <a href="https://github.com/ujwal-jibhkate/Dynamic-Embedding-RecSys" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 16 16" version="1.1" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+                    <span>View on GitHub</span>
+                </a>
+            </div>
         </header>
 
         <article>
@@ -215,7 +260,7 @@
             
             <h2>Phase 3: Dynamic User Embeddings - A Learning Taste Profile</h2>
             <p>With a "digital DNA" for every movie, the next challenge was to create one for each <strong>user</strong>. This user embedding needed to be a living representation of their unique taste, capable of evolving as they interact with new films.</p>
-            <p>Our system bypasses the "cold start" problem with a <strong>"warm start"</strong> approach. A new user's profile is initialized by averaging the embeddings of 3-5 movies they already love. From there, a custom neural network called the <strong><code>UserUpdateFFN</code></strong> intelligently refines the user's embedding after each new movie interaction. A key feature of this model is a <strong>residual connection</strong>, which means the network only learns to predict the <em>change</em> or <em>delta</em> to the user's profile. This leads to much more stable learning and ensures a user's taste profile evolves smoothly without forgetting their core preferences.</p>
+            <p>Our system bypasses the "cold start" problem with a <strong>"warm start"</strong> approach. A new user's profile is initialized by averaging the embeddings of 3-5 movies they already love. From there, a custom neural network called the <strong><code>UserEmbeddingUpdater</code></strong> intelligently refines the user's embedding after each new movie interaction. A key feature of this model is a <strong>residual connection</strong>, which means the network only learns to predict the <em>change</em> or <em>delta</em> to the user's profile. This leads to much more stable learning and ensures a user's taste profile evolves smoothly without forgetting their core preferences.</p>
             <p>We trained this updater model by simulating thousands of user interactions, again using Triplet Loss. The model was taught a simple but profound rule: "When a user likes a movie, update their profile so it moves significantly closer to the movie they liked, and simultaneously moves away from movies they are unlikely to care about."</p>
             
             <section class="embedded-content">
@@ -228,7 +273,7 @@
 
             <h2>Phase 4: The Recommendation Pipeline - Retrieval and Ranking</h2>
             <p>A production-grade system requires a sophisticated, two-step pipeline to be both fast and intelligent: <strong>Candidate Retrieval</strong> and <strong>Ranking</strong>.</p>
-            <p>To learn the affinity between users and movies, I implemented a <strong><code>Two-Tower Model</code></strong>, with one tower for users and one for items. This model was trained to predict whether a user would like a movie, learning to project users and movies into a shared space where proximity indicates a good match.</p>
+            <p>To learn the affinity between users and movies, I implemented a <strong>Two-Tower Model</strong>, with one tower for users and one for items. This model was trained to predict whether a user would like a movie, learning to project users and movies into a shared space where proximity indicates a good match.</p>
             <p>For the retrieval step, we used <strong>FAISS (Facebook AI Similarity Search)</strong>. We indexed all our specialized movie vectors into FAISS, which allows us to instantly retrieve the top 100 most relevant candidates for any user without a slow, exhaustive search. For the ranking step, we used <strong>Maximal Marginal Relevance (MMR)</strong> to refine this list of 100 candidates. MMR iteratively builds the final recommendation list by selecting items that strike the best balance between <strong>relevance</strong> to the user and <strong>diversity</strong> from items already selected, ensuring the final list is both accurate and interesting.</p>
             
             <section class="embedded-content">
